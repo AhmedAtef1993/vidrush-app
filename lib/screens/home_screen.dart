@@ -229,7 +229,7 @@ class _HomeScreenState extends State<HomeScreen> {
                               .where((r) => r is Map && r['success'] == true)
                               .length;
                           final totalTests = results.values
-                              .where((r) => r is Map)
+                              .whereType<Map>()
                               .length;
 
                           ScaffoldMessenger.of(context).showSnackBar(

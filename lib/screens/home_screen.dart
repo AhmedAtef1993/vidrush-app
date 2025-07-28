@@ -4,6 +4,7 @@ import 'package:url_launcher/url_launcher.dart';
 import '../widgets/background_widget.dart';
 import '../services/video_download_service.dart';
 import '../services/connection_test.dart';
+import '../services/debug_service.dart';
 import 'video_player_screen.dart';
 import 'settings_screen.dart';
 
@@ -146,7 +147,33 @@ class _HomeScreenState extends State<HomeScreen> {
                       // Debug button (only in development)
                       GestureDetector(
                         onTap: () async {
+                          print('🔧 Starting comprehensive debug test...');
+                          DebugService.printDebugInfo();
                           await ConnectionTest.testBackendConnection();
+
+                          // Test all endpoints
+                          final results = await DebugService.testAllEndpoints();
+                          print('📊 Debug Results:');
+                          for (final entry in results.entries) {
+                            print('${entry.key}: ${entry.value}');
+                          }
+
+                          // Show results in snackbar
+                          final successCount = results.values
+                              .where((r) => r is Map && r['success'] == true)
+                              .length;
+                          final totalTests = results.values
+                              .where((r) => r is Map)
+                              .length;
+
+                          ScaffoldMessenger.of(context).showSnackBar(
+                            SnackBar(
+                              content: Text(
+                                'Debug: $successCount/$totalTests tests passed',
+                              ),
+                              duration: const Duration(seconds: 3),
+                            ),
+                          );
                         },
                         child: Container(
                           padding: const EdgeInsets.all(8),

@@ -30,20 +30,28 @@ class ApiService {
   static Future<Map<String, dynamic>?> getVideoInfo(String url) async {
     try {
       print('🔗 Using API URL: $baseUrl/api/video/info');
-      final response = await http.post(
-        Uri.parse('$baseUrl/api/video/info'),
-        headers: headers,
-        body: jsonEncode({'url': url}),
-      );
+      print('🔗 Request URL: $url');
+
+      final response = await http
+          .post(
+            Uri.parse('$baseUrl/api/video/info'),
+            headers: headers,
+            body: jsonEncode({'url': url}),
+          )
+          .timeout(const Duration(seconds: 30));
+
+      print('📡 Response status: ${response.statusCode}');
+      print('📡 Response body: ${response.body}');
 
       if (response.statusCode == 200) {
         return jsonDecode(response.body);
       } else {
-        print('Failed to get video info: ${response.statusCode}');
+        print('❌ Failed to get video info: ${response.statusCode}');
+        print('❌ Error response: ${response.body}');
         return null;
       }
     } catch (e) {
-      print('Error getting video info: $e');
+      print('❌ Error getting video info: $e');
       return null;
     }
   }
@@ -59,20 +67,29 @@ class ApiService {
         body['format_id'] = formatId;
       }
 
-      final response = await http.post(
-        Uri.parse('$baseUrl/api/video/download'),
-        headers: headers,
-        body: jsonEncode(body),
-      );
+      print('🔗 Starting download for URL: $url');
+      print('🔗 Using API URL: $baseUrl/api/video/download');
+
+      final response = await http
+          .post(
+            Uri.parse('$baseUrl/api/video/download'),
+            headers: headers,
+            body: jsonEncode(body),
+          )
+          .timeout(const Duration(seconds: 30));
+
+      print('📡 Download response status: ${response.statusCode}');
+      print('📡 Download response body: ${response.body}');
 
       if (response.statusCode == 200) {
         return jsonDecode(response.body);
       } else {
-        print('Failed to start download: ${response.statusCode}');
+        print('❌ Failed to start download: ${response.statusCode}');
+        print('❌ Error response: ${response.body}');
         return null;
       }
     } catch (e) {
-      print('Error starting download: $e');
+      print('❌ Error starting download: $e');
       return null;
     }
   }

@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:url_launcher/url_launcher.dart';
 import '../widgets/background_widget.dart';
 import '../services/video_download_service.dart';
 import '../services/connection_test.dart';
@@ -405,9 +406,9 @@ class _HomeScreenState extends State<HomeScreen> {
               ),
               SizedBox(height: MediaQuery.of(context).size.height * 0.03),
 
-              // Popular Section
+              // Social Media Platforms Section
               const Text(
-                'Popular',
+                'Popular Platforms',
                 style: TextStyle(
                   color: Colors.white,
                   fontSize: 18,
@@ -423,35 +424,35 @@ class _HomeScreenState extends State<HomeScreen> {
                 mainAxisSpacing: MediaQuery.of(context).size.width * 0.04,
                 childAspectRatio: 1,
                 children: [
-                  _buildPlatformIcon(
+                  _buildSocialMediaButton(
                     'Facebook',
-                    Icons.facebook,
-                    const Color(0xFF1877F2),
+                    'assets/images/facebook.png',
+                    'https://www.facebook.com',
                   ),
-                  _buildPlatformIcon(
+                  _buildSocialMediaButton(
                     'Instagram',
-                    Icons.camera_alt_outlined,
-                    const Color(0xFFE4405F),
+                    'assets/images/instagram.png',
+                    'https://www.instagram.com',
                   ),
-                  _buildPlatformIcon(
-                    'X',
-                    Icons.close_outlined,
-                    const Color(0xFF000000),
-                  ),
-                  _buildPlatformIcon(
+                  _buildSocialMediaButton(
                     'Threads',
-                    Icons.chat_bubble_outline,
-                    const Color(0xFF000000),
+                    'assets/images/threads.png',
+                    'https://www.threads.net',
                   ),
-                  _buildPlatformIcon(
-                    'LinkedIn',
-                    Icons.business,
-                    const Color(0xFF0A66C2),
-                  ),
-                  _buildPlatformIcon(
+                  _buildSocialMediaButton(
                     'TikTok',
-                    Icons.music_note_outlined,
-                    const Color(0xFF000000),
+                    'assets/images/tiktok.png',
+                    'https://www.tiktok.com',
+                  ),
+                  _buildSocialMediaButton(
+                    'LinkedIn',
+                    'assets/images/linkedin.png',
+                    'https://www.linkedin.com',
+                  ),
+                  _buildSocialMediaButton(
+                    'Twitter',
+                    'assets/images/twitter.png',
+                    'https://twitter.com',
                   ),
                 ],
               ),
@@ -497,36 +498,68 @@ class _HomeScreenState extends State<HomeScreen> {
     );
   }
 
-  Widget _buildPlatformIcon(String text, IconData icon, Color color) {
-    return Container(
-      decoration: BoxDecoration(
-        color: color,
-        borderRadius: BorderRadius.circular(15),
-        boxShadow: [
-          BoxShadow(
-            color: color.withOpacity(0.3),
-            blurRadius: 10,
-            offset: const Offset(0, 5),
-          ),
-        ],
-      ),
-      child: Column(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: [
-          Icon(icon, color: Colors.white, size: 24),
-          const SizedBox(height: 8),
-          Text(
-            text,
-            style: const TextStyle(
-              color: Colors.white,
-              fontSize: 12,
-              fontWeight: FontWeight.bold,
+  Widget _buildSocialMediaButton(String text, String imagePath, String url) {
+    return GestureDetector(
+      onTap: () async {
+        try {
+          final Uri uri = Uri.parse(url);
+          if (await canLaunchUrl(uri)) {
+            await launchUrl(uri, mode: LaunchMode.externalApplication);
+          } else {
+            ScaffoldMessenger.of(
+              context,
+            ).showSnackBar(SnackBar(content: Text('Could not open $text')));
+          }
+        } catch (e) {
+          ScaffoldMessenger.of(
+            context,
+          ).showSnackBar(SnackBar(content: Text('Error opening $text: $e')));
+        }
+      },
+      child: Container(
+        padding: const EdgeInsets.all(16),
+        decoration: BoxDecoration(
+          color: Colors.black,
+          borderRadius: BorderRadius.circular(12),
+        ),
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            // Show placeholder icon until actual images are added
+            Icon(_getIconForPlatform(text), color: Colors.white, size: 32),
+            const SizedBox(height: 8),
+            Text(
+              text,
+              style: const TextStyle(
+                color: Colors.white,
+                fontSize: 12,
+                fontWeight: FontWeight.bold,
+              ),
+              textAlign: TextAlign.center,
             ),
-            textAlign: TextAlign.center,
-          ),
-        ],
+          ],
+        ),
       ),
     );
+  }
+
+  IconData _getIconForPlatform(String platform) {
+    switch (platform.toLowerCase()) {
+      case 'facebook':
+        return Icons.facebook;
+      case 'instagram':
+        return Icons.camera_alt_outlined;
+      case 'threads':
+        return Icons.chat_bubble_outline;
+      case 'tiktok':
+        return Icons.music_note_outlined;
+      case 'linkedin':
+        return Icons.business;
+      case 'twitter':
+        return Icons.flutter_dash;
+      default:
+        return Icons.link;
+    }
   }
 
   Widget _buildRecentVideo(String title, String artist) {

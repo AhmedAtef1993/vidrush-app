@@ -5,6 +5,7 @@ import '../widgets/background_widget.dart';
 import '../services/video_download_service.dart';
 import '../services/connection_test.dart';
 import '../services/debug_service.dart';
+import '../services/simple_test.dart';
 import 'video_player_screen.dart';
 import 'settings_screen.dart';
 
@@ -149,6 +150,10 @@ class _HomeScreenState extends State<HomeScreen> {
                         onTap: () async {
                           print('🔧 Starting comprehensive debug test...');
                           DebugService.printDebugInfo();
+
+                          // Run simple test first
+                          await SimpleTest.testConnection();
+
                           await ConnectionTest.testBackendConnection();
 
                           // Test all endpoints

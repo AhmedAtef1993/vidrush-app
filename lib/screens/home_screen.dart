@@ -7,6 +7,7 @@ import '../services/connection_test.dart';
 import '../services/debug_service.dart';
 import '../services/simple_test.dart';
 import '../services/direct_test.dart';
+import '../services/network_test.dart';
 import 'video_player_screen.dart';
 import 'settings_screen.dart';
 
@@ -151,6 +152,34 @@ class _HomeScreenState extends State<HomeScreen> {
                   const Spacer(),
                   Row(
                     children: [
+                      // Network test button
+                      GestureDetector(
+                        onTap: () async {
+                          print('🌐 Running network test...');
+                          await NetworkTest.testNetworkAccess();
+                          ScaffoldMessenger.of(context).showSnackBar(
+                            const SnackBar(
+                              content: Text(
+                                'Network test completed - check console',
+                              ),
+                              duration: Duration(seconds: 2),
+                            ),
+                          );
+                        },
+                        child: Container(
+                          padding: const EdgeInsets.all(8),
+                          decoration: BoxDecoration(
+                            color: Colors.blue.withOpacity(0.8),
+                            borderRadius: BorderRadius.circular(12),
+                          ),
+                          child: const Icon(
+                            Icons.wifi,
+                            color: Colors.white,
+                            size: 20,
+                          ),
+                        ),
+                      ),
+                      const SizedBox(width: 10),
                       // Simple test button
                       GestureDetector(
                         onTap: () async {

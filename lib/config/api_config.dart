@@ -48,10 +48,20 @@ class ApiConfig {
   static const String deployedUrl =
       'https://vidrush-app-production.up.railway.app';
 
+  // Local backend URL (for testing on physical device)
+  static const String localUrl =
+      'http://192.168.1.100:8000'; // Change to your computer's IP
+
   // استخدم false علشان نشتغل على نسخة production الحقيقية
   static const bool isDevelopment = false;
 
+  // Use local backend for physical device testing
+  static const bool useLocalBackend = false; // Set to true to use local backend
+
   static String get baseUrl {
+    if (useLocalBackend) {
+      return localUrl;
+    }
     return deployedUrl;
   }
 
@@ -60,6 +70,9 @@ class ApiConfig {
   }
 
   static String get baseUrlMobile {
+    if (useLocalBackend) {
+      return localUrl;
+    }
     return deployedUrl;
   }
 }

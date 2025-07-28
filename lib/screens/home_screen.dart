@@ -6,6 +6,7 @@ import '../services/video_download_service.dart';
 import '../services/connection_test.dart';
 import '../services/debug_service.dart';
 import '../services/simple_test.dart';
+import '../services/direct_test.dart';
 import 'video_player_screen.dart';
 import 'settings_screen.dart';
 
@@ -57,7 +58,12 @@ class _HomeScreenState extends State<HomeScreen> {
         );
       } else {
         ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text('Could not fetch video information')),
+          const SnackBar(
+            content: Text(
+              'Could not fetch video information. Check console for details.',
+            ),
+            duration: Duration(seconds: 4),
+          ),
         );
       }
     } catch (e) {
@@ -145,6 +151,32 @@ class _HomeScreenState extends State<HomeScreen> {
                   const Spacer(),
                   Row(
                     children: [
+                      // Simple test button
+                      GestureDetector(
+                        onTap: () async {
+                          print('🧪 Running direct test...');
+                          await DirectTest.testStepByStep();
+                          ScaffoldMessenger.of(context).showSnackBar(
+                            const SnackBar(
+                              content: Text('Check console for test results'),
+                              duration: Duration(seconds: 2),
+                            ),
+                          );
+                        },
+                        child: Container(
+                          padding: const EdgeInsets.all(8),
+                          decoration: BoxDecoration(
+                            color: Colors.green.withOpacity(0.8),
+                            borderRadius: BorderRadius.circular(12),
+                          ),
+                          child: const Icon(
+                            Icons.play_arrow,
+                            color: Colors.white,
+                            size: 20,
+                          ),
+                        ),
+                      ),
+                      const SizedBox(width: 10),
                       // Debug button (only in development)
                       GestureDetector(
                         onTap: () async {
